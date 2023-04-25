@@ -21,10 +21,19 @@ class CharacterController < ApplicationController
   private
 
   def get_all_episodes
-    response = RestClient.get("https://rickandmortyapi.com/api/episode")
-    json_response = Oj.load(response.body)
-    json_response["results"]
+    cached_episodes = $redis.get('episodes')
+
+    if cached_episodes
+      Oj.load(cached_episodes)
+    else
+      response = RestClient.get('https://rickandmortyapi.com/api/episode')
+      json_response = Oj.load(response.body)
+      episodes = json_response['results']
+      $redis.set('episodes', Oj.dump(episodes))
+      episodes
+    end
   end
+
 
   def get_appearances(character, episodes)
     appearances = Hash.new(0)

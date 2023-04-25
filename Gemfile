@@ -45,3 +45,6 @@ gem "rest-client"
 
 # Use oj for JSON serialization and parsing
 gem "oj"
+
+# Use redis for caching layer
+gem "redis-rails"
